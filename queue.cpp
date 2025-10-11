@@ -4,16 +4,16 @@ using namespace std;
 class queue
 {
 private:
-    int* cola;
-    int* head;
-    int* tail;
-    int n_elem;
-    int capacity;
+    int* cola;   
+    int* head;   
+    int* tail;   
+    int* end;    
+    bool full;   
 public:
     queue(int cap);
     ~queue();
     bool push(int val);
-    bool pop(int& val);
+    int pop();
     bool lleno();
     bool vacio();
     void print();
@@ -21,11 +21,11 @@ public:
 
 queue::queue(int cap)
 {
-    capacity = cap;
-    cola = new int[capacity];
+    cola = new int[cap];
     head = cola;
     tail = cola;
-    n_elem = 0;
+    end = cola + cap;
+    full = false;
 }
 
 queue::~queue()
@@ -36,95 +36,97 @@ queue::~queue()
 bool queue::push(int val)
 {
     if (lleno())
-    {
         return false;
-    }
     *tail = val;
     tail++;
-    n_elem++;
-    if (tail == cola + capacity)
-    {
+    if (tail == end)
         tail = cola;
-    }
+    if (tail == head)
+        full = true;
     return true;
 }
 
-bool queue::pop(int& val)
+int queue::pop()
 {
-    if (vacio()) {
-        return false;
-    }
-    val = *head;
+    if (vacio())
+        return -1;
+    int val = *head;
     head++;
-    n_elem--;
-    if (head == cola + capacity)
-    {
+    if (head == end)
         head = cola;
-    }
-    return true;
+    full = false;
+    return val;
 }
 
 bool queue::lleno()
 {
-    return n_elem == capacity;
+    return (head == tail && full);
 }
 
 bool queue::vacio()
 {
-    return n_elem == 0;
+    return (head == tail && !full);
 }
 
 void queue::print()
 {
-    if (vacio()) {
+    if (vacio())
+    {
         cout << "Cola vacia" << endl;
         return;
     }
+
     int* p = head;
-    for (int i = 0; i < n_elem; i++)
+
+    while (true)
     {
         cout << *p << " ";
         p++;
-        if (p == cola + capacity)
-        {
+        if (p == end)
             p = cola;
-        }
+
+        if (p == tail && !full)
+            break;
+        if (p == head && full)
+            break;
     }
     cout << endl;
 }
 
-int main() 
+int main()
 {
     queue q(10);
-    int x;
-    cout << "   DEMOSTRACION COLA CIRCULAR " << endl;
 
     cout << "\nInsertando 10 elementos" << endl;
-    for (int i = 1; i <= 10; i++)
+    int i = 1;
+    while (i <= 10)
     {
         q.push(i);
         cout << "Encolado: " << i << " -> ";
         q.print();
+        i++;
     }
 
     cout << "\nDesencolando 5 num" << endl;
-    for (int i = 0; i < 5; i++)
+    int j = 0;
+    while (j < 5)
     {
-        if (q.pop(x)) {
+        int x = q.pop();
+        if (x != -1)
+        {
             cout << "Se desencolo: " << x << " -> ";
             q.print();
         }
+        j++;
     }
-
-    cout << "\nInsertando 3 elementos mas (11, 12, 13)" << endl;
-    for (int i = 11; i <= 13; i++)
+    int k = 11;
+    while (k <= 13)
     {
-        q.push(i);
-        cout << "Encolado: " << i << " -> ";
+        q.push(k);
+        cout << "Encolado: " << k << " -> ";
         q.print();
+        k++;
     }
-
-    cout << "\nfin" << endl;
     q.print();
     return 0;
 }
