@@ -15,7 +15,3 @@ Implementaciones en C++ de estructuras de datos y algoritmos clásicos realizada
 - Algoritmos de ordenamiento y búsqueda
 - Otros ejercicios del curso
 
-## Cómo compilar
-```bash
-g++ archivo.cpp -o programa
-./programa
